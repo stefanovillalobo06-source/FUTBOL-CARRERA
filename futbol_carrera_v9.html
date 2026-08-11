@@ -1,0 +1,777 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fútbol Carrera V5</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#06100b;color:#f5fff9;font-family:Arial}.wrap{max-width:1100px;margin:auto;padding:18px}header{padding:20px;text-align:center;background:#073c28;border-bottom:3px solid #24d67c}h1{margin:0}.screen{background:#10241a;border:1px solid #28583f;border-radius:18px;padding:24px}.hidden{display:none}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card,.next{background:#0a1911;border:1px solid #295a41;border-radius:13px;padding:16px;margin:10px 0}.next{border:2px solid #24d67c;background:#103621}.big{font-size:28px;font-weight:bold;color:#5af0a2}.small{color:#add9bf}button{border:0;border-radius:10px;padding:12px 15px;background:#15a765;color:white;font-weight:bold;cursor:pointer;margin:4px}button:hover{background:#20c77a}.secondary{background:#294838}input,select{width:100%;padding:10px;background:#07140c;color:white;border:1px solid #416a53;border-radius:8px;margin-top:5px}nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}nav button{font-size:13px}.buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:18px 0}.training{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.trainbox{background:#102f20;padding:12px;border-radius:10px;text-align:center}.barwrap{height:13px;background:#20382a;border-radius:20px;overflow:hidden}.bar{height:100%;background:#25ce79}table{width:100%;border-collapse:collapse}td,th{padding:7px;border-bottom:1px solid #29523d;text-align:center}td:nth-child(2),th:nth-child(2){text-align:left}.selected{outline:2px solid #22d47e}.gameTop{display:flex;justify-content:space-between;align-items:center;background:#0b1d13;padding:13px;border-radius:10px}.clock{text-align:center;font-size:40px;font-weight:bold;color:#69f5aa}.score{font-size:24px}.pitch{height:360px;margin-top:12px;border:3px solid white;border-radius:14px;position:relative;overflow:hidden;background:repeating-linear-gradient(90deg,#167242 0 46px,#176f3f 46px 92px)}.centerline{position:absolute;left:50%;top:0;bottom:0;border-left:2px solid white}.centerCircle{position:absolute;width:100px;height:100px;border:2px solid white;border-radius:50%;left:calc(50% - 50px);top:calc(50% - 50px)}.goal{position:absolute;top:115px;width:45px;height:130px;border:3px solid white}.left{left:-3px}.right{right:-3px}.dot{position:absolute;width:17px;height:17px;z-index:20;border:2px solid white;border-radius:50%;transition:.7s}.blue{background:#168cff}.red{background:#ef4352}.you{width:20px;height:20px;border:3px solid #ffe94f;z-index:20}.situation,.end{background:#f4fff8;color:#082114;border-radius:13px;padding:17px;margin-top:12px;text-align:center}.whistle{text-align:center;font-size:55px}.rating{font-size:52px;color:#ffe94f;font-weight:bold}.shooting{background:#173b27;padding:15px;border-radius:13px;margin-top:12px}.commentary{background:#06130c;border-left:4px solid #28d47e;padding:10px 14px;border-radius:8px;margin-top:10px;font-style:italic}.setpiece{background:#102d1d;color:white;border-radius:13px;padding:15px;margin-top:12px}.aims{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:520px;margin:14px auto}.aim{border-radius:50%;font-size:22px;background:#284336;border:2px solid #8ab79e;min-height:58px}.aim:disabled{cursor:default;opacity:.95}.goalview{height:220px;max-width:580px;margin:auto;background:#e8eee9;border:8px solid white;position:relative}.net{position:absolute;inset:0;background:repeating-linear-gradient(90deg,#aaa 0 2px,transparent 2px 38px),repeating-linear-gradient(0deg,#aaa 0 2px,transparent 2px 38px);opacity:.4}.green{background:#168f52!important}.redaim{background:#a8323e!important}.goalview{height:220px;max-width:580px;margin:auto;background:#e8eee9;border:8px solid white;position:relative}.net{position:absolute;inset:0;background:repeating-linear-gradient(90deg,#aaa 0 2px,transparent 2px 38px),repeating-linear-gradient(0deg,#aaa 0 2px,transparent 2px 38px);opacity:.4}.aims{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:500px;margin:12px auto}.aim{border-radius:50%;font-size:22px;background:#284336;border:2px solid #8ab79e}.green{background:#168f52!important}.redaim{background:#a8323e!important}@media(max-width:750px){.grid{grid-template-columns:1fr}.training{grid-template-columns:1fr 1fr}.pitch{height:290px}}
+
+.goalview{height:220px;margin:12px auto;display:flex;align-items:flex-end;justify-content:center;background:linear-gradient(#8ed0ff 0 42%,#72b957 42% 100%);border-radius:12px;overflow:hidden}
+.goal-frame{position:relative;width:300px;height:170px;margin-bottom:12px;border:6px solid #fff;border-bottom-width:10px;background:repeating-linear-gradient(45deg,rgba(255,255,255,.18) 0 4px,transparent 4px 12px);box-shadow:0 8px 0 rgba(0,0,0,.12)}
+.goal-post{position:absolute;background:#fff;box-shadow:0 0 2px #555}.goal-post.left{left:-6px;top:-6px;width:6px;height:176px}.goal-post.right{right:-6px;top:-6px;width:6px;height:176px}.goal-post.top{left:-6px;top:-6px;width:312px;height:6px}
+.keeper{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);font-size:38px;filter:drop-shadow(0 2px 1px #333)}
+.celebration{position:relative;height:170px;margin:8px auto 0;overflow:hidden;border-radius:12px;background:linear-gradient(#71b7e8 0 45%,#4d9b42 45% 100%)}
+.pixel-player{position:absolute;bottom:18px;left:50%;font-size:42px;image-rendering:pixelated;animation:goalJump .55s steps(2,end) infinite,runCorner 1.5s ease-out forwards}
+.confetti{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 20% 25%,#fff 0 2px,transparent 3px),radial-gradient(circle at 70% 20%,#fff 0 2px,transparent 3px),radial-gradient(circle at 45% 35%,#fff 0 2px,transparent 3px)}
+@keyframes goalJump{50%{transform:translateY(-18px) rotate(-5deg)}}
+@keyframes runCorner{to{left:82%}}
+
+.goal-chant{position:absolute;top:12px;left:50%;transform:translateX(-50%);font-weight:900;font-size:24px;text-shadow:2px 2px 0 #000;animation:chantPulse .45s steps(2,end) infinite}
+@keyframes chantPulse{50%{transform:translateX(-50%) scale(1.08)}}
+</style></head><body><header><h1>⚽ FÚTBOL: CARRERA V5</h1><div>Modo carrera profesional</div></header><div class="wrap">
+<section id="menu" class="screen"><h2>Menú principal</h2><div class="buttons"><button onclick="createScreen()">⚽ Nueva carrera</button><button class="secondary" onclick="load()">💾 Cargar partida</button></div></section>
+<section id="create" class="screen hidden"><h2>👤 Crear jugador</h2><div class="grid">
+<div><label>Nombre</label><input id="name" placeholder="Stefano"></div><div><label>Edad</label><input id="age" type="number" value="18"></div><div><label>País</label><input id="country" value="Argentina"></div>
+<div><label>Posición</label><select id="pos"><option>Delantero</option><option>Extremo</option><option>Mediocampista</option><option>Defensor</option><option>Arquero</option></select></div>
+<div><label>Liga</label><select id="league" onchange="updateClubOptions()"></select></div><div><label>Club</label><select id="club"></select></div><div><label>Tipo de carrera</label><select id="type"><option value="realista">🧑‍🎓 Realista</option><option value="rapida">⚡ Rápida</option><option value="estrella">👑 Superestrella</option></select></div></div><div class="buttons"><button onclick="newPlayer()">🚀 Empezar</button><button class="secondary" onclick="show('menu')">Volver</button></div></section>
+<section id="career" class="screen hidden"><nav><button onclick="tab('home')">🏠 Inicio</button><button onclick="tab('calendar')">📅 Calendario</button><button onclick="tab('train')">🏋️ Entrenar</button><button onclick="tab('market')">💰 Mercado</button><button onclick="tab('table')">🏆 Tabla</button><button onclick="tab('profile')">👤 Perfil</button></nav>
+<div id="home" class="tab"><h2 id="welcome"></h2><div class="grid"><div class="card"><h3>Club</h3><div id="hclub" class="big"></div><p id="hpos"></p></div><div class="card"><h3>Fecha</h3><div id="hround" class="big"></div><p id="hopp"></p></div><div class="card"><h3>Estado</h3><div id="hstate" class="big"></div><p id="hmorale"></p></div></div>
+<div class="card"><h3>🧑‍💼 Confianza del DT: <span id="conf"></span>/100</h3><div class="barwrap"><div id="confbar" class="bar"></div></div><p id="role"></p></div><div id="next" class="next"></div><div class="card">📣 <b>Noticias:</b> <span id="news"></span></div></div>
+<div id="calendar" class="tab hidden"><h2>📅 Calendario</h2><div id="cal"></div></div>
+<div id="train" class="tab hidden"><h2>🏋️ Entrenamiento</h2><p>Máximo 3 puntos por fecha. Podés poner los 3 en el mismo atributo.</p><div id="trains" class="training"></div><div class="card">Energía: <b id="energy"></b>/100</div></div>
+<div id="market" class="tab hidden"><h2>💰 Mercado</h2><div id="marketInfo"></div><div id="offers"></div></div>
+<div id="table" class="tab hidden"><h2>🏆 Tabla</h2><table><thead><tr><th>#</th><th>Club</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>DG</th><th>Pts</th></tr></thead><tbody id="stand"></tbody></table></div>
+<div id="profile" class="tab hidden"><h2>👤 Perfil</h2>
+<div class="card" style="display:flex;gap:18px;justify-content:center;margin:10px 0">
+  <div><strong>Edad</strong><div id="playerAge">18 años</div></div>
+  <div><strong>Temporada</strong><div id="playerSeason">Temporada 1</div></div>
+</div><div class="grid"><div class="card" id="pinfo"></div><div class="card"><h3>📊 Estadísticas</h3><p>Partidos: <b id="apps"></b></p><p>Goles: <b id="goals"></b></p><p>Asistencias: <b id="assists"></b></p><p>Valoración media: <b id="avg"></b></p><p>Minutos: <b id="mins"></b></p></div><div class="card"><h3>💰 Finanzas</h3><p>Valor: <b id="value"></b></p><p>Salario: <b id="salary"></b></p></div></div><h3>Atributos</h3><div id="attrs" class="grid"></div></div>
+<div class="buttons"><button onclick="save()">💾 Guardar partida</button><button class="secondary" onclick="show('menu')">🏠 Menú</button></div></section>
+<section id="game" class="screen hidden"><div class="gameTop"><button class="secondary" onclick="leave()">← Salir</button><div><b id="gr"></b><br><span id="teams"></span></div><div class="score" id="score">0 - 0</div></div><div id="clock" class="clock">0:00</div><div id="liveState" class="small" style="text-align:center">🔴 PREPARADO</div><div id="startMatch" class="situation"><h2>🏟️ El partido está listo</h2><p>Presioná el botón para comenzar.</p><button onclick="beginMatch()">▶️ EMPEZAR PARTIDO</button></div><div id="pitch" class="pitch"><div class="centerline"></div><div class="centerCircle"></div><div class="goal left"></div><div class="goal right"></div></div><div id="commentary" class="commentary">🎙️ Preparando la transmisión...</div><div id="event"></div></section></div>
+<script>
+const LEAGUES={
+  "Argentina":["River Plate","Boca Juniors","Racing Club","Independiente","San Lorenzo","Estudiantes de La Plata","Rosario Central","Newell's Old Boys","Vélez Sarsfield","Talleres"],
+  "España":["Real Madrid","Barcelona","Atlético de Madrid","Athletic Club","Sevilla","Valencia","Villarreal","Real Betis","Real Sociedad","Girona"],
+  "Inglaterra":["Manchester City","Liverpool","Arsenal","Manchester United","Chelsea","Tottenham Hotspur","Newcastle United","Aston Villa","West Ham United","Everton"]
+};
+let CLUBS=LEAGUES["Argentina"];
+function clubsForLeague(l){return LEAGUES[l]||LEAGUES["Argentina"];}
+function leagueForClub(c){return Object.keys(LEAGUES).find(l=>LEAGUES[l].includes(c))||"Argentina";}
+let p=null,g=null,timer=null,audio=null;const $=x=>document.getElementById(x);
+
+const S=[
+ ["🔥 RECIBÍS CERCA DEL ÁREA",[
+   ["shoot","🥅 Pegarle"],["pass","🎯 Pasarla"],["dribble","⚡ Encarar"]
+ ]],
+ ["🎯 CENTRO AL ÁREA",[
+   ["header","🧠 Cabecear"],["leave","🙅 Dejarla pasar"],["pass","🎯 Bajársela"]
+ ]],
+ ["⚡ CONTRAATAQUE",[
+   ["dribble","⚡ Encarar"],["pass","🎯 Filtrar pase"],["shoot","🥅 Rematar"]
+ ]],
+ ["🏃 MANO A MANO",[
+   ["shoot","🥅 Definir"],["dribble","⚡ Amagar"],["pass","🎯 Pase al compañero"]
+ ]],
+ ["➡️ RECIBÍS POR LA DERECHA",[
+   ["dribble","⚡ Ir hacia adentro"],["cross","🎯 Centrar"],["pass","↩️ Tocar atrás"]
+ ]],
+ ["⬅️ RECIBÍS POR LA IZQUIERDA",[
+   ["dribble","⚡ Encara al lateral"],["cross","🎯 Centro al segundo palo"],["pass","↩️ Pase atrás"]
+ ]],
+ ["🔥 PASE ENTRE LÍNEAS",[
+   ["shoot","🥅 Rematar de primera"],["control","🧠 Controlar"],["pass","🎯 Devolver la pared"]
+ ]],
+ ["🥅 PELOTA SUELTA",[
+   ["shoot","💥 Rematar"],["control","🧠 Controlar"],["pass","🎯 Buscar compañero"]
+ ]]
+];
+
+function show(id){["menu","create","career","game"].forEach(x=>$(x).classList.add("hidden"));$(id).classList.remove("hidden")}
+function updateClubOptions(){const l=$("league")?.value||"Argentina";const list=clubsForLeague(l);$("club").innerHTML=list.map(x=>`<option>${x}</option>`).join("")}
+function createScreen(){if($("league")){$("league").innerHTML=Object.keys(LEAGUES).map(x=>`<option>${x}</option>`).join("");$("league").value="Argentina";}updateClubOptions();show("create")}
+function baseStand(){let s={};clubsForLeague(p?.league||"Argentina").forEach(x=>s[x]={club:x,pj:0,g:0,e:0,p:0,gf:0,gc:0,pts:0});return s}
+function sched(c){const rivals=clubsForLeague(p?.league||"Argentina").filter(x=>x!==c);const first=rivals.map((x,i)=>({round:i+1,opponent:x,home:i%2===0,played:false,result:"",mode:""}));const second=rivals.map((x,i)=>({round:rivals.length+i+1,opponent:x,home:i%2!==0,played:false,result:"",mode:""}));return first.concat(second)}
+function base(){return{name:"",age:18,country:"Argentina",pos:"Delantero",league:"Argentina",club:"River Plate",type:"realista",speed:70,shoot:65,pass:68,dribble:67,def:55,phys:67,potential:85,level:1,xp:0,energy:100,morale:75,confidence:20,apps:0,goals:0,assists:0,ratingSum:0,lastRating:0,minutes:0,value:250000,salary:1200,round:1,train:0,season:1,window:false,news:"Arranca tu carrera. Ganate la confianza del DT.",stand:baseStand(),schedule:[]}}
+function newPlayer(){let n=$("name").value.trim();if(!n)return alert("Poné un nombre.");p=base();p.name=n;p.age=+$("age").value;p.country=$("country").value||"Argentina";p.pos=$("pos").value;p.league=$("league").value||"Argentina";p.club=$("club").value;p.type=$("type").value;if(p.type==="rapida")p.potential=92;if(p.type==="estrella"){p.potential=99;p.speed+=5;p.shoot+=5;p.pass+=5;p.dribble+=5}p.stand=baseStand();p.schedule=sched(p.club);show("career");render();tab("home");save(1)}
+function save(silent){localStorage.setItem("footballCareerV5",JSON.stringify(p));if(!silent)alert("¡Partida guardada!")}
+function load(){let x=localStorage.getItem("footballCareerV5");if(!x)return alert("No hay partida V5.");p=JSON.parse(x);p.league=leagueForClub(p.club);if(!p.schedule||p.schedule.length<18){p.schedule=sched(p.club);p.round=1;p.seasonEnd=false;p.window=false;}if(!p.stand||Object.keys(p.stand).length!==10||!p.stand[p.club])p.stand=baseStand();save(1);show("career");render();tab("home")}
+function tab(id){document.querySelectorAll(".tab").forEach(x=>x.classList.add("hidden"));$(id).classList.remove("hidden");if(id==="calendar")cal();if(id==="train")train();if(id==="market"){if(p&&p.seasonEnd)showSeasonMarket();else market()}if(id==="table")table();if(id==="profile")profile()}
+function next(){return p.schedule.find(x=>!x.played)}
+
+function checkSeasonEnd(){
+  if(!p||!p.schedule||p.schedule.length===0)return false;
+  const done=p.schedule.every(x=>x.played);
+  if(done && !p.seasonEnd){
+    p.seasonEnd=true;
+    save(1);
+  }
+  return done;
+}
+
+
+function addSeasonButton(){
+ if(!p||!p.schedule)return; const done=p.schedule.length>0&&p.schedule.every(x=>x.played); if(!done)return; const n=$("next"); if(n)n.innerHTML=`<h3>🏁 TEMPORADA TERMINADA</h3><p>Todos los partidos fueron completados.</p><button onclick="prepareEndOfSeason()">📋 IR AL MERCADO DE FICHAJES</button>`;
+}
+
+
+function updateNextFixture(){
+  if(!p||!p.schedule)return;
+  const n=p.schedule.find(x=>!x.played);
+  const el=$("next");
+  if(!el)return;
+
+  if(!n){
+    el.innerHTML=`<h3>🏁 TEMPORADA TERMINADA</h3>
+      <button onclick="prepareEndOfSeason()">📋 IR AL MERCADO DE FICHAJES</button>`;
+    return;
+  }
+
+  const idx=p.schedule.indexOf(n);
+  el.innerHTML=`<h3>📅 FECHA ${n.round}</h3>
+    <p>${n.home?p.club:n.opponent} vs ${n.home?n.opponent:p.club}</p>
+    <div class="buttons">
+      <button onclick="start(${idx})">🎮 JUGAR PARTIDO</button>
+      <button onclick="sim()">⚡ SIMULAR</button>
+    </div>`;
+}
+
+function renderCoreSeasonWrap(){let n=next();$("welcome").textContent=`¡Vamos, ${p.name}! 🔥`;$("hclub").textContent=p.club;$("hpos").textContent=`${p.age} años · ${p.pos}`;$("hround").textContent=n?`Fecha ${n.round}`:"Mercado";$("hopp").textContent=n?`${n.home?p.club:n.opponent} vs ${n.home?n.opponent:p.club}`:"Temporada terminada";$("hstate").textContent=p.energy>60?"Disponible":p.energy>30?"Cansado":"Muy cansado";$("hmorale").textContent=`Moral ${p.morale}/100 · Energía ${p.energy}/100`;$("conf").textContent=Math.round(p.confidence);$("confbar").style.width=p.confidence+"%";$("role").textContent=p.confidence>=70?"🟢 TITULAR":p.confidence<50?"🪑 SUPLENTE · entra en el segundo tiempo":"🪑 SUPLENTE · puede entrar en el primer tiempo";$("news").textContent=p.news;nextBox();train();profile()}
+function nextBox(){let n=next();$("next").innerHTML=n?`<h3>⚽ FECHA ${n.round}</h3><div class="big">${n.home?p.club:n.opponent} vs ${n.home?n.opponent:p.club}</div><p>Objetivo del DT: <b>7.0+</b></p><button onclick="sim()">🎲 Simular partido</button><button onclick="play()">🎮 Jugar partido</button>`:`<h3>🏁 TEMPORADA TERMINADA</h3><p>Período de fichajes abierto.</p><button onclick="tab('market')">💰 Mercado</button>`}
+function render(){
+  renderCoreSeasonWrap();
+  setTimeout(()=>{addSeasonButton();updateNextFixture();},0);
+}
+
+
+function teamStrength(club){
+  const strong=["River Plate","Boca Juniors","Real Madrid","Barcelona","Atlético de Madrid","Manchester City","Liverpool","Arsenal","Manchester United","Chelsea"];
+  const upper=["Racing Club","Independiente","San Lorenzo","Estudiantes de La Plata","Villarreal","Real Sociedad","Athletic Club","Tottenham Hotspur","Newcastle United","Aston Villa"];
+  if(strong.includes(club))return 86;
+  if(upper.includes(club))return 78;
+  return 70;
+}
+function difficultyAgainst(club){
+  const s=teamStrength(club), my=teamStrength(p.club);
+  return Math.max(-0.22,Math.min(0.22,(s-my)/100));
+}
+function simGoals(strengthDiff, home){
+  // Stronger opponents reduce our scoring and slightly increase their scoring.
+  const homeAdv=home?0.10:0;
+  const lambda=1.05-strengthDiff*1.8+homeAdv;
+  const u=Math.random();
+  if(u<0.36)return 0;
+  if(u<0.70)return 1;
+  if(u<0.90)return 2;
+  if(u<0.98)return 3;
+  return 4;
+}
+
+function sim(){
+ if(p&&p.retired)return;
+ let i=p.schedule.findIndex(x=>!x.played);
+ if(i<0){
+   if(p.schedule.every(x=>x.played)) prepareEndOfSeason();
+   return;
+ }
+ let m=p.schedule[i];
+ const opponent=m.opponent;
+ const diff=difficultyAgainst(opponent);
+ const myHome=m.home;
+ let my=simGoals(diff,myHome);
+ let opp=simGoals(-diff,!myHome);
+
+ // Prevent implausible runaway results while retaining randomness.
+ if(Math.random()<0.12){my=Math.max(0,my-1);}
+ if(Math.random()<0.12){opp=Math.max(0,opp-1);}
+
+ let r=+(5.0+Math.random()*4.7).toFixed(1);
+ let starter=p.confidence>=70;
+ p.apps++;p.minutes+=starter?90:45;p.ratingSum+=r;p.lastRating=r;
+
+ let gg=(p.pos==="Delantero"||p.pos==="Extremo")&&my>0&&Math.random()<Math.min(.75,.28+(r/20))?1:0;
+ let aa=r>=7&&my>0&&Math.random()<.35?1:0;
+ p.goals+=gg;p.assists+=aa;
+ p.confidence=Math.max(0,Math.min(100,p.confidence+(r>=7?8:-7)));
+
+ p.news=`Fecha ${m.round}: ${my}-${opp} · ⭐ ${r.toFixed(1)}${gg?" · ⚽ "+gg:""}${aa?" · 🎯 "+aa:""}`;
+
+ // Persist the fixture, standings and next date BEFORE showing the result.
+ finish(i,my,opp,"Simulado");
+ save(1);
+ render();
+
+ g={
+   m,home:my,away:opp,rating:r,goals:gg,assists:aa,
+   finished:true,paused:true,event:false,crowdTimer:null,
+   mins:starter?90:45
+ };
+
+ show("game");
+ $("gr").textContent=`Fecha ${m.round}`;
+ $("teams").textContent=`${m.home?p.club:m.opponent} vs ${m.home?m.opponent:p.club}`;
+ $("score").textContent=`${my} - ${opp}`;
+ $("clock").textContent="FINAL";
+ $("liveState").textContent="🏁 FINALIZADO";
+ $("startMatch").classList.add("hidden");
+ $("event").innerHTML=`<div class="end simResult">
+   <div class="whistle">📋</div>
+   <h2>SIMULACIÓN — FECHA ${m.round}</h2>
+   <div class="big">${my} - ${opp}</div>
+   <div class="rating">${r.toFixed(1)}</div>
+   <p>⭐ Tu valoración</p>
+   <p>⚽ ${gg} gol${gg===1?"":"es"} · 🎯 ${aa} asistencia${aa===1?"":"s"}</p>
+   <p>🧑‍💼 Confianza DT: ${Math.round(p.confidence)}/100</p>
+   <button onclick="finishMatchView()">➡️ CONTINUAR</button>
+ </div>`;
+ commentary(`Simulación terminada: ${my}-${opp}.`);
+}
+function R(){return Math.floor(Math.random()*5)}
+function apply(a,b,x,y){let A=p.stand[a],B=p.stand[b];A.pj++;B.pj++;A.gf+=x;A.gc+=y;B.gf+=y;B.gc+=x;if(x>y){A.g++;A.pts+=3;B.p++}else if(x<y){B.g++;B.pts+=3;A.p++}else{A.e++;B.e++;A.pts++;B.pts++}}
+function others(){let x=CLUBS.filter(c=>c!==p.club);while(x.length){let a=x.shift(),b=x.shift();apply(a,b,R(),R())}}
+function finish(i,my,opp,mode){let m=p.schedule[i],a=m.home?p.club:m.opponent,b=m.home?m.opponent:p.club,x=m.home?my:opp,y=m.home?opp:my;apply(a,b,x,y);m.played=true;m.result=`${my} - ${opp}`;m.mode=mode;others();p.energy=Math.min(100,p.energy+45);p.train=0;p.round=m.round+1;if(p.round>p.schedule.length)p.window=true;save(1)}
+function end(){render();tab("home")}
+function play(){let i=p.schedule.findIndex(x=>!x.played);if(i>=0)start(i)}
+function beep(f=900,d=.14){try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();let o=audio.createOscillator(),g=audio.createGain();o.frequency.value=f;o.type="square";g.gain.value=.05;o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+d)}catch(e){}}
+function whistle(){$("event").innerHTML='<div class="whistle">📯</div>';beep(1200,.12);setTimeout(()=>beep(1500,.13),130)}
+function crowdStart(){soundStart();}
+function crowdBurst(){try{soundStart();beep(500,.08);setTimeout(()=>beep(700,.1),90);}catch(e){}}
+function goalCrowd(){
+ try{
+   soundStart();
+   [180,240,300,360,420].forEach((f,i)=>{
+     setTimeout(()=>{
+       try{
+         let o=audio.createOscillator(),gain=audio.createGain(),now=audio.currentTime;
+         o.type="sawtooth";o.frequency.value=f;
+         gain.gain.setValueAtTime(.025,now);
+         gain.gain.exponentialRampToValueAtTime(.001,now+.22);
+         o.connect(gain);gain.connect(audio.destination);
+         o.start(now);o.stop(now+.24);
+       }catch(e){}
+     },i*120);
+   });
+ }catch(e){}
+}
+function commentary(text){
+ $("commentary").innerHTML="🎙️ "+text;
+}
+
+
+let matchRAF=null;
+
+function dots(){
+ const q=document.getElementById("pitch");
+ if(!q)return;
+ q.querySelectorAll(".dot").forEach(d=>d.remove());
+ for(let i=0;i<11;i++){
+   const d=document.createElement("i"); d.className="dot blue";
+   d.style.left=(5+Math.random()*42)+"%"; d.style.top=(6+Math.random()*86)+"%"; q.appendChild(d);
+ }
+ for(let i=0;i<11;i++){
+   const d=document.createElement("i"); d.className="dot red";
+   d.style.left=(53+Math.random()*42)+"%"; d.style.top=(6+Math.random()*86)+"%"; q.appendChild(d);
+ }
+}
+
+function move(){
+ const q=document.getElementById("pitch");
+ if(!q)return;
+ let ds=q.querySelectorAll(".dot");
+ if(ds.length!==22){dots(); ds=q.querySelectorAll(".dot");}
+ ds.forEach(d=>{
+   let x=parseFloat(d.style.left)||50, y=parseFloat(d.style.top)||50;
+   const blue=d.classList.contains("blue");
+   x+=(Math.random()-.5)*3.5;
+   y+=(Math.random()-.5)*5;
+   const minX=blue?3:51, maxX=blue?48:96;
+   d.style.left=Math.max(minX,Math.min(maxX,x))+"%";
+   d.style.top=Math.max(4,Math.min(92,y))+"%";
+ });
+}
+
+function start(i){
+ if(p&&p.retired)return;
+ const m=p.schedule[i];
+ const role=p.confidence>=70?"start":p.confidence<50?"late":"early";
+ const entry=role==="start"?0:role==="late"?38+Math.floor(Math.random()*8):10+Math.floor(Math.random()*25);
+
+ g={
+   i,m,role,entry,started:false,paused:true,finished:false,half:1,
+   clock:role==="start"?0:entry,lastTime:0,acc:0,
+   nextEvent:8+Math.random()*5,event:false,
+   home:0,away:0,rating:role==="start"?6.1:5.9,
+   goals:0,assists:0,contrib:0,mins:role==="start"?90:90-entry
+ };
+
+ show("game");
+ $("gr").textContent=`Fecha ${m.round}`;
+ $("teams").textContent=`${m.home?p.club:m.opponent} vs ${m.home?m.opponent:p.club}`;
+ $("score").textContent="0 - 0";
+ $("clock").textContent=String(g.clock);
+ $("liveState").textContent="🔴 LISTO";
+ $("startMatch").classList.remove("hidden");
+ $("startMatch").innerHTML=`<h2>🏟️ Partido preparado</h2>
+ <p>${role==="start"?"Sos titular.":`Vas a entrar en el minuto ${entry}'.`}</p>
+ <button onclick="beginMatch()">▶️ EMPEZAR PARTIDO</button>`;
+ $("event").innerHTML="";
+ commentary("🎙️ Todo listo. Apretá EMPEZAR PARTIDO.");
+ dots();
+}
+
+function beginMatch(){
+ if(!g||g.started)return;
+ g.started=true;
+ g.paused=false;
+ g.lastTime=performance.now();
+ $("startMatch").classList.add("hidden");
+ $("liveState").textContent="🟢 EN VIVO";
+ dots();
+ soundStart();
+ whistle();
+
+ if(g.role==="start"){
+   commentary("¡ARRANCA EL PARTIDO! La pelota está en juego.");
+ }else{
+   g.paused=true;
+   $("event").innerHTML=`<div class="situation"><h3>🪑 Entrás al partido</h3>
+   <p>Minuto ${g.entry}'. El DT te da una oportunidad.</p>
+   <button onclick="enter()">▶️ ENTRAR</button></div>`;
+   commentary("El partido ya está en marcha. El DT te llama.");
+ }
+ cancelMatchLoop();
+ matchRAF=requestAnimationFrame(matchFrame);
+}
+
+function enter(){
+ if(!g)return;
+ g.paused=false;
+ $("event").innerHTML="";
+ g.lastTime=performance.now();
+ commentary("¡Entra "+p.name+"! A demostrarle al DT.");
+}
+
+function cancelMatchLoop(){
+ if(matchRAF)cancelAnimationFrame(matchRAF);
+ matchRAF=null;
+}
+
+function matchFrame(now){
+ if(!g||g.finished)return;
+
+ if(!g.paused&&!g.event){
+   if(!g.lastTime)g.lastTime=now;
+   let dt=(now-g.lastTime)/1000;
+   g.lastTime=now;
+   g.acc+=dt;
+
+   // Exactly one simulated minute per real second.
+   while(g.acc>=1&&!g.paused&&!g.event){
+     g.acc-=1;
+     g.clock++;
+     $("clock").textContent=String(g.clock);
+     move();
+
+     if(g.clock>=45&&g.half===1){halftime();break;}
+     if(g.clock>=90&&g.half===2){finishGame();break;}
+
+     g.nextEvent-=1;
+     if(g.nextEvent<=0){
+       openNormalSituation();
+       break;
+     }
+
+     if(Math.random()<0.025)enemy();
+   }
+
+   $("liveState").textContent="🟢 EN VIVO";
+ }else if(g.event||g.paused){
+   $("liveState").textContent="⏸️ PAUSA";
+ }
+
+ matchRAF=requestAnimationFrame(matchFrame);
+}
+
+function formatClock(s){
+ return Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
+}
+
+function openNormalSituation(){
+ if(!g||g.finished)return;
+ g.event=true;
+ g.paused=true;
+ g.nextEvent=5+Math.random()*4;
+
+ if(Math.random()<0.15){
+   setPieceEvent(Math.random()<0.55?"penalty":"freekick");
+   return;
+ }
+
+ const s=S[Math.floor(Math.random()*S.length)];
+ $("event").innerHTML=`<div class="situation"><h3>${s[0]}</h3>
+ <p>⏸️ TIEMPO DETENIDO</p>
+ ${s[1].map(x=>`<button onclick="action('${x[0]}')">${x[1]}</button>`).join("")}</div>`;
+ commentary("¡ATENCIÓN! "+s[0].replace(/^[^ ]+ /,"")+" ¿Qué hará "+p.name+"?");
+ beep(850,.08);
+}
+
+function resumeMatch(){
+ if(!g||g.finished)return;
+ g.goalCelebration=false;
+ g.event=false;
+ g.paused=false;
+ g.lastTime=performance.now();
+ $("event").innerHTML="";
+ $("liveState").textContent="🟢 EN VIVO";
+ commentary("La pelota vuelve a estar en juego.");
+}
+
+function action(a){
+ if(!g||g.finished)return;
+
+ let skill=50;
+ if(a==="shoot") skill=p.shoot;
+ else if(a==="pass") skill=p.pass;
+ else if(a==="dribble") skill=(p.dribble*0.75)+(p.speed*0.25);
+ else if(a==="header") skill=(p.shoot*0.55)+(p.phys*0.45);
+ else if(a==="control") skill=(p.pass*0.60)+(p.dribble*0.40);
+ else if(a==="cross") skill=(p.pass*0.70)+(p.dribble*0.30);
+ else if(a==="leave") skill=50;
+
+ // Attribute = real influence, but never guarantees success.
+ const chance=Math.min(.94,Math.max(.18,skill/100));
+
+ if(Math.random()<chance){
+   g.contrib++;g.rating+=.4;
+
+   if(["dribble","cross","pass","control"].includes(a)&&Math.random()<.35){
+     const chains={
+       dribble:["🔥 ¡SUPERASTE AL DEFENSOR!",[["shoot","🥅 Definir"],["pass","🎯 Asistir"],["cross","🎯 Centrar"]]],
+       cross:["🎯 ¡CENTRO PERFECTO!",[["header","🧠 Cabecear"],["shoot","💥 Rematar"],["leave","🙅 Dejarla pasar"]]],
+       pass:["⚡ ¡PASE FILTRADO!",[["shoot","🥅 Rematar"],["dribble","⚡ Encarar"],["pass","🎯 Pase extra"]]],
+       control:["🔥 ¡CONTROL PERFECTO!",[["shoot","🥅 Definir"],["dribble","⚡ Amagar"],["pass","🎯 Buscar compañero"]]]
+     };
+     const z=chains[a]||chains.control;
+     $("event").innerHTML=`<div class="situation"><h3>${z[0]}</h3><p>⏸️ La jugada continúa.</p>
+     ${z[1].map(x=>`<button onclick="action('${x[0]}')">${x[1]}</button>`).join("")}</div>`;
+     commentary("¡La jugada continúa! "+z[0]);
+     return;
+   }
+
+   if(Math.random()<.70){
+     if(g.m.home)g.home++;else g.away++;
+     g.goals++;p.goals++;g.rating+=.8;
+     g.goalCelebration=true;
+     score();crowdBurst();
+     showGoalCelebration();
+   }else{
+     $("event").innerHTML=`<div class="situation"><h2>🔥 ¡BUENA JUGADA!</h2><p>Salió bien, pero no terminó en gol.</p></div>`;
+     commentary("Buena jugada, pero el arquero evita el gol.");
+   }
+ }else{
+   g.rating=Math.max(4,g.rating-.3);
+   $("event").innerHTML=`<div class="situation"><h2>😬 NO SALIÓ</h2><p>El rival corta la jugada.</p></div>`;
+   commentary("El rival corta la jugada.");
+ }
+ score();
+ setTimeout(resumeMatch,g&&g.goalCelebration?5000:1200);
+}
+
+function setPieceEvent(type){
+ g.event=true;g.paused=true;g.setPiece=type;
+ $("event").innerHTML=`<div class="setpiece"><h3>${type==="penalty"?"🥅 ¡PENAL!":"🎯 ¡TIRO LIBRE!"}</h3>
+ <p>⏸️ TIEMPO DETENIDO</p><div class="goalview">
+  <div class="goal-frame">
+    <div class="goal-net"></div>
+    <div class="goal-post left"></div><div class="goal-post right"></div><div class="goal-post top"></div>
+    <div class="keeper">🧤</div>
+  </div>
+</div>
+ <div class="aims">${["↖️ Arriba izquierda","⬆️ Arriba centro","↗️ Arriba derecha","⬅️ Izquierda","⭕ Centro","➡️ Derecha"]
+ .map((x,i)=>`<button class="aim" onclick="aim(${i})">${x}</button>`).join("")}</div></div>`;
+ commentary(type==="penalty"?"¡PENAL!":"¡TIRO LIBRE PELIGROSO!");
+ beep(1050,.12);
+}
+
+function aim(i){
+ const buttons=document.querySelectorAll(".aim");
+ buttons.forEach(b=>b.disabled=true);
+ const goal=[0,4].includes(i);
+ const palo=Math.random()<.5;
+
+ if(goal){
+   buttons[i].classList.add("green");
+   if(g.m.home)g.home++;else g.away++;
+   g.goals++;p.goals++;g.rating+=1.4;g.contrib++;
+   g.goalCelebration=true;
+   score();crowdBurst();
+   showGoalCelebration();
+ }else{
+   buttons[i].classList.add("redaim");
+   $("event").innerHTML=`<div class="end"><div class="rating">🔴</div><h3>${palo?"¡PALO!":"¡ATAJÓ EL ARQUERO!"}</h3></div>`;
+   commentary(palo?"¡PALO!":"¡ATAJADÓN!");
+ }
+ setTimeout(resumeMatch,g&&g.goalCelebration?5000:1600);
+}
+
+function enemy(){
+ if(!g||g.paused||g.event)return;
+ if(Math.random()<.65){
+   if(g.m.home)g.away++;else g.home++;
+   score();crowdBurst();
+   g.event=true;g.paused=true;
+   $("event").innerHTML=`<div class="situation"><h2>😱 ¡TE METIERON GOL!</h2><p>El rival convirtió.</p></div>`;
+   commentary("¡GOOOOL DEL RIVAL!");
+   setTimeout(resumeMatch,1300);
+ }
+}
+
+function score(){
+ if($("score"))$("score").textContent=g.home+" - "+g.away;
+}
+
+function halftime(){
+ if(!g||g.finished)return;
+ g.paused=true;
+ whistle();
+ $("event").innerHTML=`<div class="end"><div class="whistle">📯</div><h2>ENTRETIEMPO</h2>
+ <p>${g.home}-${g.away}</p><button onclick="second()">▶️ SEGUNDO TIEMPO</button></div>`;
+ commentary("Final de los primeros 45 minutos.");
+}
+
+function second(){
+ if(!g||g.finished)return;
+ g.half=2;
+ g.clock=45;
+ g.paused=false;
+ g.event=false;
+ g.nextEvent=5+Math.random()*4;
+ g.lastTime=performance.now();
+ $("event").innerHTML="";
+ $("clock").textContent="45";
+ commentary("¡COMIENZA EL SEGUNDO TIEMPO!");
+}
+
+
+function showGoalCelebration(){
+  const box=document.createElement("div");
+  box.className="celebration";
+  box.innerHTML='<div class="confetti"></div><div class="pixel-player">🧑‍🎤⚽</div><div class="goal-chant">🔊 ¡GOOOOOOOL!</div>';
+  $("event").innerHTML=`<div class="situation"><h2>🎉 ¡GOOOOOL DE ${p.name.toUpperCase()}!</h2><p>🏟️ ¡La hinchada explota!</p></div>`;
+  $("event").appendChild(box);
+  commentary("¡GOOOOOOOL! "+p.name+" corre hacia el córner para festejar.");
+  crowdBurst();
+  goalCrowd();
+}
+function finishGame(){
+ if(!g||g.finished)return;
+ g.finished=true;g.paused=true;cancelMatchLoop();
+ whistle();soundStop();
+
+ const m=g.m,my=m.home?g.home:g.away,opp=m.home?g.away:g.home;
+ const r=+Math.max(4.5,Math.min(10,g.rating+(Math.random()*.7-.35))).toFixed(1);
+
+ p.lastRating=r;p.ratingSum+=r;p.apps++;p.minutes+=g.mins;
+ if(r>=7&&Math.random()<.25){p.assists++;g.assists++}
+ p.confidence=Math.max(0,Math.min(100,p.confidence+(r>=7?8:-7)));
+ p.xp+=10+g.contrib*4;
+ while(p.xp>=100){p.xp-=100;p.level++;p.value+=150000}
+
+ p.news=`Final ${g.home}-${g.away} · ⭐ ${r.toFixed(1)} · ⚽ ${g.goals} · 🎯 ${g.assists}`;
+ finish(g.i,my,opp,"Jugado");save(1);
+
+ $("event").innerHTML=`<div class="end"><div class="whistle">📯</div><h2>🏁 FINAL</h2>
+ <div class="big">${g.home}-${g.away}</div><div class="rating">${r.toFixed(1)}</div>
+ <p>⭐ Tu valoración</p><p>⚽ ${g.goals} goles · 🎯 ${g.assists} asistencias · ⏱️ ${g.mins}'</p>
+ <p>🧑‍💼 Confianza DT: ${Math.round(p.confidence)}/100</p>
+ <button onclick="finishMatchView()">➡️ CONTINUAR</button></div>`;
+ commentary("¡FINAL DEL PARTIDO!");
+}
+
+function finishMatchView(){
+ cancelMatchLoop();soundStop();
+ g=null;
+ save(1);
+ if(p && p.schedule && p.schedule.length && p.schedule.every(x=>x.played)){
+   prepareEndOfSeason();
+   return;
+ }
+ show("career");render();tab("home");
+}
+
+function leave(){
+ cancelMatchLoop();soundStop();g=null;show("career");render();tab("home");
+}
+
+function soundStart(){
+ try{
+   audio=audio||new(window.AudioContext||window.webkitAudioContext)();
+   if(audio.state==="suspended")audio.resume();
+   if(g&&g.crowdTimer)clearInterval(g.crowdTimer);
+   if(g){
+     g.crowdTimer=setInterval(()=>{
+       if(!g||g.finished||g.paused)return;
+       // Very soft, short stadium "murmur" pulses; no impact on match timing.
+       for(let j=0;j<2;j++){
+         let o=audio.createOscillator(),gain=audio.createGain(),now=audio.currentTime;
+         o.type="triangle"; o.frequency.value=90+Math.random()*70;
+         gain.gain.setValueAtTime(.006,now);
+         gain.gain.exponentialRampToValueAtTime(.001,now+.18);
+         o.connect(gain);gain.connect(audio.destination);
+         o.start(now);o.stop(now+.2);
+       }
+     },700);
+   }
+ }catch(e){}
+}
+function soundStop(){
+ try{
+   if(g&&g.crowdTimer)clearInterval(g.crowdTimer);
+ }catch(e){}
+}
+
+
+function averageSeasonRating(){
+  return p && p.apps ? +(p.ratingSum/p.apps).toFixed(1) : 0;
+}
+
+function seasonTarget(){
+  const season=p?.season||1;
+  return +(6+Math.min(2,(season-1)*0.25)).toFixed(1);
+}
+function goalTarget(){
+  const season=p?.season||1;
+  return Math.min(20,4+(season-1)*2);
+}
+
+function prepareEndOfSeason(){
+  if(!p)return;
+  p.seasonEnd=true;
+  p.seasonAvg=averageSeasonRating();
+  p.contractTarget=seasonTarget();
+  p.transferOffers=p.transferOffers||[];
+
+  // Offers are generated from performance, but the player can always
+  // continue with a renewal if no offer is accepted.
+  const avg=p.seasonAvg;
+  if(p.transferOffers.length===0){
+    if(avg>=8.2) p.transferOffers.push({club:"Real Madrid",fee:4500000,season:p.season||1});
+    else if(avg>=7.5) p.transferOffers.push({club:"Atlético de Madrid",fee:3000000,season:p.season||1});
+    else if(avg>=6.8) p.transferOffers.push({club:"Racing Club",fee:1800000,season:p.season||1});
+  }
+
+  // Guaranteed fallback offer: there is always a club willing to take the player.
+  const hasOffer=p.transferOffers.length>0;
+  if(!hasOffer){
+    const fallbackClubs=["Club Atlético Huracán","Club Atlético Banfield","Club Atlético Tigre","Club Atlético Lanús"];
+    const fallback=fallbackClubs[(p.season||1)%fallbackClubs.length];
+    const fee=Math.max(250000,Math.round((p.value||500000)*0.45));
+    p.transferOffers.push({club:fallback,fee,season:p.season||1,guaranteed:true});
+  }
+  save(1);
+  showSeasonMarket();
+}
+
+function showSeasonMarket(){
+ if(!p)return; p.seasonEnd=true; show("career"); document.querySelectorAll(".tab").forEach(x=>x.classList.add("hidden")); $("market").classList.remove("hidden");
+ const offers=p.transferOffers||[],avg=averageSeasonRating(),target=seasonTarget(),approved=avg>=target;
+ const renewal=approved?`<button style="background:#1f9d55;color:white" onclick="renewAndNextSeason()">🤝 CONFIRMAR RENOVACIÓN Y PASAR A TEMPORADA ${((p.season||1)+1)}</button>`:`<button disabled style="opacity:.45;cursor:not-allowed">🔒 RENOVACIÓN BLOQUEADA — OBJETIVO NO CUMPLIDO</button>`;
+ $("marketInfo").innerHTML=`<div class="card"><h2>🏁 FIN DE TEMPORADA</h2><p>📅 Temporada ${p.season||1} · Edad ${p.age||18}</p><p>⭐ Promedio final: <strong>${avg.toFixed(1)}</strong></p><p>🎯 Objetivo del contrato: <strong>${target.toFixed(1)}</strong><br>⚽ Objetivo de goles: <strong>${goalTarget()}</strong></p><p>⚽ ${p.goals||0} goles · 🎯 ${p.assists||0} asistencias · 🏟️ ${p.apps||0} partidos</p></div><div class="card"><h3>📝 OFERTA DE RENOVACIÓN</h3><p>${approved && (p.goals||0)>=goalTarget() ? "🟢 Objetivos cumplidos. Podés renovar." : "🔴 No cumpliste todos los objetivos."}</p>${renewal}</div>`;
+ $("offers").innerHTML=offers.map((o,i)=>`<div class="card"><h3>🚨 OFERTA DE ${o.club.toUpperCase()}${o.guaranteed?" ⭐":""}</h3><p>💰 Oferta: <strong>€${Number(o.fee).toLocaleString("es-AR")}</strong></p><button onclick="acceptTransfer(${i})">✅ ACEPTAR TRANSFERENCIA</button><button class="secondary" onclick="rejectTransfer(${i})">❌ RECHAZAR</button></div>`).join("")+`<div class="card"><h3>➡️ CONTINUAR</h3><p>Si no renovás ni aceptás una oferta, podés continuar tu carrera.</p><button onclick="continueWithoutRenewal()">➡️ CONTINUAR A TEMPORADA ${((p.season||1)+1)}</button></div>`;
+}
+
+function renewAndNextSeason(){
+  p.news=`📝 Stefano renovó con ${p.club}. El próximo contrato será más exigente.`;
+  startNewSeason();
+  show("career");render();tab("home");
+}
+
+function acceptTransfer(i){
+  const o=(p.transferOffers||[])[i];
+  if(!o)return;
+  const oldClub=p.club;
+  p.club=o.club;
+  p.league=leagueForClub(o.club);
+  p.news=`🚨 TRANSFERENCIA: Stefano pasó de ${oldClub} a ${o.club} y ahora juega en la liga de ${p.league} por €${Number(o.fee).toLocaleString("es-AR")}.`;
+  p.transferOffers=[];
+  startNewSeason();
+  show("career");render();tab("home");
+}
+
+function rejectTransfer(i){
+  if(!p.transferOffers)return;
+  const o=p.transferOffers[i];
+  p.transferOffers.splice(i,1);
+  p.news=`📰 Stefano rechazó la oferta de ${o.club}.`;
+  save(1);
+  showSeasonMarket();
+}
+
+function continueWithoutRenewal(){
+  p.news=`📰 Stefano continúa su carrera para la próxima temporada.`;
+  startNewSeason();
+  if(!p.retired){ show("career");render();tab("home"); }
+}
+
+function startNewSeason(){
+  if(!p)return;
+
+  if((p.age||18)>=40){
+    p.retired=true;
+    p.news=`🏁 Stefano Villalobos se retiró a los 40 años después de una carrera profesional.`;
+    save(1);
+    show("career");
+    const host=$("content");
+    if(host){
+      host.innerHTML=`<section>
+        <div class="end">
+          <div class="whistle">🏆</div>
+          <h2>🏁 FIN DE LA CARRERA</h2>
+          <div class="big">40 AÑOS</div>
+          <p>Stefano Villalobos se retiró del fútbol profesional.</p>
+          <p>⚽ ${p.goals||0} goles · 🎯 ${p.assists||0} asistencias</p>
+        </div>
+      </section>`;
+    }
+    return;
+  }
+
+  p.league=leagueForClub(p.club);
+  p.age=(p.age||18)+1;
+  p.season=(p.season||1)+1;
+
+  ["speed","shoot","pass","dribble","phys"].forEach(k=>{
+    if(typeof p[k]==="number") p[k]=Math.max(1,p[k]-2);
+  });
+
+  p.confidence=50;
+  p.apps=0;p.minutes=0;p.goals=0;p.assists=0;
+  p.ratingSum=0;p.lastRating=0;
+  p.xp=0;
+  p.seasonEnd=false;
+  p.contractTarget=6.0;
+  p.seasonAvg=0;
+
+  // New season: clear completed fixtures and build a fresh calendar.
+  p.league=leagueForClub(p.club);
+  p.stand=baseStand();
+  p.schedule=sched(p.club);
+  p.round=1;
+  p.window=false;
+  p.transferOffers=[];
+  save(1);
+}
+
+function addTransferOffer(club,fee){
+  p.transferOffers=p.transferOffers||[];
+  p.transferOffers.push({club,fee,season:p.season||1});
+  p.news=`🚨 OFERTA: ${club} ofreció €${Number(fee).toLocaleString("es-AR")} por Stefano.`;
+  save(1);
+}
+
+
+function finishSeasonAndAdvance(){
+  prepareEndOfSeason();
+}
+
+
+function bestTrainingFocus(){
+  if(!p)return "shoot";
+  const attrs=["speed","shoot","pass","dribble","phys"];
+  return attrs.sort((a,b)=>p[a]-p[b])[0];
+}
+
+function train(){
+ if(p&&p.retired)return;if(!p)return;$("energy").textContent=p.energy;let x=[["speed","⚡ Velocidad"],["shoot","🎯 Tiro"],["pass","🧠 Pase"],["dribble","✨ Regate"],["def","🛡️ Defensa"],["phys","💪 Físico"]];$("trains").innerHTML=x.map(a=>`<div class="trainbox"><b>${a[1]}</b><div class="big">${p[a[0]]}</div><button ${p.train>=3||p[a[0]]>=99?"disabled":""} onclick="up('${a[0]}')">+1</button></div>`).join("")}
+function up(k){if(p.train>=3)return alert("Máximo 3 puntos por fecha.");p[k]++;p.train++;p.energy=Math.max(20,p.energy-8);save(1);render()}
+function market(){if(!p.window){$("marketInfo").innerHTML=`<div class="card">🔒 Mercado cerrado. Se abre al terminar la temporada.</div>`;$("offers").innerHTML="";return}let av=p.apps?p.ratingSum/p.apps:0;let o=[];if(av>=6)o.push(["Argentinos Juniors",1700]);if(av>=6.8)o.push(["Racing Club",2500]);if(av>=7.5)o.push(["Estudiantes de La Plata",3300]);if(av>=8.2)o.push(["River Plate",5000]);if(av>=8.7)o.push(["Boca Juniors",6000]);$("marketInfo").innerHTML=`<div class="card"><h3>🛒 PERÍODO DE TRASPASOS</h3>Valoración media: <b>${av.toFixed(1)}</b></div>`;$("offers").innerHTML=o.length?o.map(x=>`<div class="card"><h3>📨 ${x[0]}</h3><p>Salario: $${x[1]}/semana</p><button onclick="offer('${x[0]}',${x[1]})">Aceptar</button></div>`).join(""):`<div class="card">No llegaron ofertas.</div>`}
+function offer(c,s){if(!confirm("¿Fichar por "+c+"?"))return;p.club=c;p.salary=s;p.stand=baseStand();p.schedule=sched(c);p.round=1;p.window=false;p.season++;p.confidence=Math.max(20,p.confidence-15);p.news="¡Fichaje confirmado! Nueva temporada en "+c+".";save(1);render();tab("home")}
+function table(){let r=Object.values(p.stand).sort((a,b)=>b.pts-a.pts||(b.gf-b.gc)-(a.gf-a.gc));$("stand").innerHTML=r.map((x,i)=>`<tr class="${x.club===p.club?"selected":""}"><td>${i+1}</td><td>${x.club}</td><td>${x.pj}</td><td>${x.g}</td><td>${x.e}</td><td>${x.p}</td><td>${x.gf}</td><td>${x.gc}</td><td>${x.gf-x.gc}</td><td><b>${x.pts}</b></td></tr>`).join("")}
+function profile(){$("pinfo").innerHTML=`<h3>${p.name}</h3>${p.age} años · ${p.pos}<br>${p.country}<br>Nivel ${p.level} · Potencial ${p.potential}<br>Confianza DT: ${Math.round(p.confidence)}/100`;$("apps").textContent=p.apps;$("goals").textContent=p.goals;$("assists").textContent=p.assists;$("avg").textContent=p.apps?(p.ratingSum/p.apps).toFixed(1):"—";$("mins").textContent=p.minutes;$("value").textContent="$"+p.value.toLocaleString();$("salary").textContent="$"+p.salary.toLocaleString();let a=[["speed","Velocidad"],["shoot","Tiro"],["pass","Pase"],["dribble","Regate"],["def","Defensa"],["phys","Físico"]];$("attrs").innerHTML=a.map(x=>`<div class="card"><b>${x[1]}</b><div class="big">${p[x[0]]}</div><div class="barwrap"><div class="bar" style="width:${p[x[0]]}%"></div></div></div>`).join("")}
+function cal(){$("cal").innerHTML=p.schedule.map(m=>`<div class="card"><b>Fecha ${m.round}</b> · ${m.home?"🏠":"✈️"} ${m.home?p.club:m.opponent} vs ${m.home?m.opponent:p.club}<br>${m.played?"Final "+m.result+" · "+m.mode:"Pendiente"}</div>`).join("")}
+</script></body></html>
